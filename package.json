@@ -1,0 +1,24 @@
+{
+  "name": "azure-langchain-js",
+  "version": "1.0.0",
+  "description": "Azure OpenAI with LangChain.js",
+  "main": "Azure.js",
+  "type": "module",
+  "scripts": {
+    "start": "node Azure.js"
+  },
+  "dependencies": {
+    "@langchain/azure-openai": "^0.0.6",
+    "@langchain/community": "^0.3.40",
+    "@langchain/core": "^0.3.44",
+    "@langchain/openai": "^0.5.5",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.3.1",
+    "express": "^5.1.0",
+    "http": "^0.0.1-security",
+    "langchain": "^0.3.21",
+    "socket.io": "^4.8.1",
+    "three": "^0.175.0",
+    "zod": "^3.24.2"
+  }
+}

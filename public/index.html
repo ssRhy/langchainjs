@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Three.js 实时预览</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r158/three.min.js"></script>
+    <style>
+      #container {
+        display: flex;
+        height: 100vh;
+      }
+      #editor {
+        width: 40%;
+        padding: 20px;
+        background: #f0f0f0;
+      }
+      #preview {
+        width: 60%;
+        position: relative;
+      }
+      #renderCanvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .log {
+        color: #666;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="editor">
+        <h2>代码生成器</h2>
+        <input type="text" id="promptInput" placeholder="输入物体描述" />
+        <button onclick="generate()">生成</button>
+        <pre id="codeDisplay"></pre>
+        <div id="log" class="log"></div>
+      </div>
+      <div id="preview">
+        <canvas id="renderCanvas"></canvas>
+      </div>
+    </div>
+
+    <script>
+      const socket = io();
+      let currentScene = null;
+
+      // 接收代码更新
+      socket.on("code_update", ({ code, status }) => {
+        document.getElementById("codeDisplay").textContent = code;
+        updateLog(`代码更新: ${status}`);
+        renderThreeJs(code);
+      });
+
+      // 渲染Three.js
+      function renderThreeJs(code) {
+        try {
+          // 清理旧场景
+          if (currentScene) {
+            currentScene.dispose();
+          }
+
+          // 动态执行新代码
+          const canvas = document.getElementById("renderCanvas");
+          const context = canvas.getContext("webgl2");
+          const userCode = new Function(code);
+          currentScene = userCode(canvas, THREE);
+        } catch (error) {
+          updateLog(`渲染错误: ${error.message}`, "error");
+        }
+      }
+
+      // 生成请求
+      function generate() {
+        const prompt = document.getElementById("promptInput").value;
+        socket.emit("generate", prompt);
+      }
+
+      // 日志更新
+      function updateLog(message, type = "info") {
+        const logDiv = document.getElementById("log");
+        logDiv.innerHTML += `<div class="${type}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
