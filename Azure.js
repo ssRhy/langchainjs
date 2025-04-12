@@ -78,7 +78,7 @@ const tools = [
       }
     },
   }),
-
+//检查agent
   new DynamicStructuredTool({
     name: "validate_threejs_code",
     description: "验证Three.js代码完整性",
@@ -176,10 +176,9 @@ async function interactiveLoop() {
       const result = await mainAgent(input);
 
       if (result.status === "success") {
-        console.log("\n✅ 生成成功！自动打开浏览器预览...");
+        console.log("\n 生成成功自动打开浏览器预览...");
       } else {
-        console.log("\n⚠️ 需要修正：", result.feedback);
-        console.log("尝试优化描述后重试");
+        console.log("\n 需要修正：", result.feedback);
       }
 
       ask();
